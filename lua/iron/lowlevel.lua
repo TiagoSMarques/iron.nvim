@@ -38,7 +38,7 @@ ll.get_buffer_ft = function(bufnr)
   if ft == nil or ft == "" then
     error("Empty filetype")
   elseif fts[ft] == nil and config.repl_definition[ft] == nil then
-    error("There's no REPL definition for current filetype "..ft)
+    error("There's no REPL definition for current filetype " .. ft)
   end
   return ft
 end
@@ -70,7 +70,7 @@ ll.create_repl_on_current_window = function(ft, repl, bufnr, current_bufnr, opts
         vim.api.nvim_win_close(bufwinid, true)
         bufwinid = vim.fn.bufwinid(bufnr)
       end
-      vim.api.nvim_buf_delete(bufnr, {force = true})
+      vim.api.nvim_buf_delete(bufnr, { force = true })
     end
   else
     opts.on_exit = function() end
@@ -152,21 +152,22 @@ ll.send_to_repl = function(meta, data)
   local dt = data
 
   if type(data) == "string" then
-    dt = vim.split(data..";;", '\n')
+    dt = vim.split(data .. ";;", '\n')
+  else
+    table.insert(dt, ";;")
   end
 
   dt = format(meta.repldef, dt)
-
   local window = vim.fn.bufwinid(meta.bufnr)
   if window ~= -1 then
-    vim.api.nvim_win_set_cursor(window, {vim.api.nvim_buf_line_count(meta.bufnr), 0})
+    vim.api.nvim_win_set_cursor(window, { vim.api.nvim_buf_line_count(meta.bufnr), 0 })
   end
 
   --TODO check vim.api.nvim_chan_send
   vim.fn.chansend(meta.job, dt)
 
   if window ~= -1 then
-    vim.api.nvim_win_set_cursor(window, {vim.api.nvim_buf_line_count(meta.bufnr), 0})
+    vim.api.nvim_win_set_cursor(window, { vim.api.nvim_buf_line_count(meta.bufnr), 0 })
   end
 end
 
@@ -198,7 +199,7 @@ end
 -- @tparam int bufnr number of the buffer being checked
 -- @treturn string filetype of the buffer's repl (or nil if it doesn't have a repl associated)
 ll.get_repl_ft_for_bufnr = function(bufnr)
-  for _, values  in pairs(ll.store) do
+  for _, values in pairs(ll.store) do
     for _, meta in pairs(values) do
       if meta.bufnr == bufnr then
         return meta.ft

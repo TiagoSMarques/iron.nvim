@@ -340,7 +340,7 @@ core.mark_visual = function()
     if b_lines[#b_lines] == ";;" then
       return b_lines
     else
-      table.insert(b_lines, ";;")  --Hack to insert ;; needed by utop
+      table.insert(b_lines, ";;") --Hack to insert ;; needed by utop
       return b_lines
     end
   else
@@ -380,7 +380,7 @@ core.mark_motion = function(mtype)
   }
 
   marks.winrestview()
-    return lines
+  return lines
 end
 
 --- Sends a chunk of text from a motion to the repl
