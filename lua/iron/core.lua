@@ -246,7 +246,7 @@ end
 -- the data beforehand.
 core.send_line = function()
   local linenr = vim.api.nvim_win_get_cursor(0)[1] - 1
-  local cur_line = vim.api.nvim_buf_get_lines(0, linenr, linenr + 1, 0)[1]
+  local cur_line = vim.api.nvim_buf_get_lines(0, linenr, linenr + 1, false)[1]
   local width = vim.fn.strwidth(cur_line)
 
   if width == 0 then return end
@@ -266,8 +266,8 @@ end
 -- the data beforehand.
 core.send_until_cursor = function()
   local linenr = vim.api.nvim_win_get_cursor(0)[1] - 1
-  local text_until_line = vim.api.nvim_buf_get_lines(0, 0, linenr + 1, 0)
-  local last_line = vim.api.nvim_buf_get_lines(0, linenr, linenr + 1, 0)[1]
+  local text_until_line = vim.api.nvim_buf_get_lines(0, 0, linenr + 1, false)
+  local last_line = vim.api.nvim_buf_get_lines(0, linenr, linenr + 1, false)[1]
   local last_line_width = vim.fn.strwidth(last_line)
 
   marks.set {
@@ -298,7 +298,7 @@ core.mark_visual = function()
     e_col, b_col = b_col, e_col
   end
 
-  local lines = vim.api.nvim_buf_get_lines(0, b_line - 1, e_line, 0)
+  local lines = vim.api.nvim_buf_get_lines(0, b_line - 1, e_line, false)
 
   if #lines == 0 then return end
 
@@ -344,7 +344,7 @@ core.mark_visual = function()
       return b_lines
     end
   else
-    return lines .. ";;"
+    return table.insert(lines, ";;")
   end
 end
 
@@ -358,7 +358,7 @@ core.mark_motion = function(mtype)
   b_line, b_col = unpack(vim.fn.getpos("'["), 2, 3)
   e_line, e_col = unpack(vim.fn.getpos("']"), 2, 3)
 
-  local lines = vim.api.nvim_buf_get_lines(0, b_line - 1, e_line, 0)
+  local lines = vim.api.nvim_buf_get_lines(0, b_line - 1, e_line, false)
   if #lines == 0 then return end
 
   if mtype == 'line' then
@@ -380,7 +380,7 @@ core.mark_motion = function(mtype)
   }
 
   marks.winrestview()
-  return lines
+    return lines
 end
 
 --- Sends a chunk of text from a motion to the repl
@@ -410,7 +410,7 @@ core.send_mark = function()
 
   if pos == nil then return end
 
-  local lines = vim.api.nvim_buf_get_lines(0, pos.from_line, pos.to_line + 1, 0)
+  local lines = vim.api.nvim_buf_get_lines(0, pos.from_line, pos.to_line + 1, false)
 
   if #lines == 1 then
     if pos.from_col >= 1 or pos.to_col < vim.fn.strwidth(lines[1]) - 1 then
@@ -634,7 +634,7 @@ core.setup = function(opts)
     }
 
 
-    (vim.api.nvim__set_hl_ns or vim.api.nvim_set_hl_ns)(config.namespace)
+    (vim.api.nvim_set_hl_ns or vim.api.nvim_set_hl_ns)(config.namespace)
     vim.api.nvim_set_hl(config.namespace, config.highlight_last, hl_cfg)
   end
 
