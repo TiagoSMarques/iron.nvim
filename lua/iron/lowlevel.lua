@@ -152,7 +152,7 @@ ll.send_to_repl = function(meta, data)
   local dt = data
 
   if type(data) == "string" then
-    dt = vim.split(data, '\n')
+    dt = vim.split(data..";;", '\n')
   end
 
   dt = format(meta.repldef, dt)
